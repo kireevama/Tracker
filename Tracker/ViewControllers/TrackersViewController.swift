@@ -7,13 +7,16 @@
 
 import UIKit
 
-class TrackerViewController: UIViewController {
+class TrackersViewController: UIViewController {
     // MARK: - Propertys
     let topNavView: UIView = {
         let topNavView = UIView()
         
         return topNavView
     }()
+    
+    var categories: [TrackerCategory]? // Свой-во для хранения списка категорий и вложенных в них трекеров
+    var completedTrackers: [TrackerRecord]? // Для хранения выполненных в выбранную дату трекеров
     
     override func viewDidLoad() {
         super.viewDidLoad()
