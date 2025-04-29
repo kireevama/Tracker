@@ -8,16 +8,14 @@
 import UIKit
 
 class TrackersViewController: UIViewController {
-    // MARK: - Propertys
+    // MARK: - Properties
     let topNavView: UIView = {
         let topNavView = UIView()
         
         return topNavView
     }()
     
-    var categories: [TrackerCategory]? // Свой-во для хранения списка категорий и вложенных в них трекеров
-    var completedTrackers: [TrackerRecord]? // Для хранения выполненных в выбранную дату трекеров
-    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -42,6 +40,8 @@ class TrackersViewController: UIViewController {
             button.widthAnchor.constraint(equalToConstant: 42).isActive = true
             button.heightAnchor.constraint(equalToConstant: 42).isActive = true
             
+            button.addTarget(self, action: #selector(self.plusButtonTapped(_:)), for: .touchUpInside)
+            
             return button
         }()
         
@@ -49,6 +49,8 @@ class TrackersViewController: UIViewController {
             let datePicker = UIDatePicker()
             datePicker.preferredDatePickerStyle = .compact
             datePicker.datePickerMode = .date
+            
+            datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
             
             return datePicker
         }()
@@ -104,14 +106,29 @@ class TrackersViewController: UIViewController {
             return searchBar
         }()
         
+        topNavView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             topNavView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
             topNavView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             topNavView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            topNavView.bottomAnchor.constraint(equalTo: searchBar.bottomAnchor)
         ])
         
         getStubScreen(imageName: "star", text: "Что будем отслеживать?", view: self.view)
     }
     
+    // MARK: - Actions
+    @objc private func plusButtonTapped(_ sender: UIButton) {
+        let createTrackerVC = CreateTrackerController()
+        present(createTrackerVC, animated: true, completion: nil)
+    }
+    
+    @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
+        let selectedDate = sender.date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy"
+        let formattedDate = dateFormatter.string(from: selectedDate)
+        print("Выбранная дата: \(formattedDate)")
+    }
     
 }
