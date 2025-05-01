@@ -1,5 +1,5 @@
 //
-//  CreateTrackerController.swift
+//  ChooseTrackerTypeViewController.swift
 //  Tracker
 //
 //  Created by Marina Kireeva on 29.04.2025.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CreateTrackerController: UIViewController {
+final class ChooseTrackerTypeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,5 +53,22 @@ final class CreateTrackerController: UIViewController {
             createHabitButton.widthAnchor.constraint(equalTo: vStack.widthAnchor),
             createIrregularEventButton.widthAnchor.constraint(equalTo: vStack.widthAnchor)
         ])
+        
+        createHabitButton.addTarget(self, action: #selector(self.createHabitButtonTapped(_:)), for: .touchUpInside)
+        createIrregularEventButton.addTarget(self, action: #selector(self.createIrregularEventButtonTapped(_:)), for: .touchUpInside)
+    }
+    
+
+    
+    @objc private func createHabitButtonTapped(_ sender: UIButton) {
+        let createTrackerVC = CreateTrackerViewController()
+        createTrackerVC.trackerType = .regular
+        present(createTrackerVC, animated: true, completion: nil)
+    }
+    
+    @objc private func createIrregularEventButtonTapped(_ sender: UIButton) {
+        let createTrackerVC = CreateTrackerViewController()
+        createTrackerVC.trackerType = .irregular
+        present(createTrackerVC, animated: true, completion: nil)
     }
 }

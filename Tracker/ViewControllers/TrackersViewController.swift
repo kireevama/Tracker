@@ -8,6 +8,7 @@
 import UIKit
 
 class TrackersViewController: UIViewController {
+    
     // MARK: - Properties
     let topNavView: UIView = {
         let topNavView = UIView()
@@ -119,8 +120,8 @@ class TrackersViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func plusButtonTapped(_ sender: UIButton) {
-        let createTrackerVC = CreateTrackerController()
-        present(createTrackerVC, animated: true, completion: nil)
+        let chooseTrackerVC = ChooseTrackerTypeViewController()
+        present(chooseTrackerVC, animated: true, completion: nil)
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
