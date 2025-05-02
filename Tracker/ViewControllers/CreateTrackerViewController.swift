@@ -30,7 +30,8 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
     private func setupUI() {
         
         // topLabel
-        let topLabel = UILabel.createNavAppStyleLabel(title: "Новая привычка")
+        let title = trackerType == .regular ? "Новая привычка" : "Новое нерегулярное событие"
+        let topLabel = UILabel.createNavAppStyleLabel(title: title)
         view.addSubview(topLabel)
         topLabel.translatesAutoresizingMaskIntoConstraints = false
         
@@ -55,6 +56,21 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .clear
         
+        // buttons
+        let cancelButton = UIButton.createCancelStyleButton(title: "Отменить")
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        let saveButton = UIButton.createNoActiveStyleButton(title: "Создать")
+        saveButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        // hStack
+        let hStack = UIStackView(arrangedSubviews: [cancelButton, saveButton])
+        view.addSubview(hStack)
+        hStack.axis = .horizontal
+        hStack.spacing = 8
+        hStack.distribution = .fillEqually
+        hStack.alignment = .center
+        hStack.translatesAutoresizingMaskIntoConstraints = false
+        
         // Constraints
         NSLayoutConstraint.activate([
             topLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 26),
@@ -70,7 +86,17 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            cancelButton.heightAnchor.constraint(equalToConstant: 60),
+            saveButton.heightAnchor.constraint(equalToConstant: 60),
+            
+            hStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            hStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            hStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0)
         ])
+        
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
+        saveButton.addTarget(self, action: #selector(saveButtonTapped(_:)), for: .touchUpInside)
         
     }
     
@@ -120,11 +146,23 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
     
     // MARK: - TableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true) // Убираем выделение
+        
         if indexPath.row == 0 {
             // MARK: - TODO Переход на экран с категорией
         } else if trackerType == .regular && indexPath.row == 1 {
             // Переход на экран расписания
+            let scheduleVC = ScheduleViewController()
+            present(scheduleVC, animated: true, completion: nil)
         }
+    }
+    
+    @objc private func cancelButtonTapped(_ sender: UIButton) {
+        view.window?.rootViewController?.dismiss(animated: true)
+    }
+    
+    @objc private func saveButtonTapped(_ sender: UIButton) {
+        
     }
     
     // MARK: - Preview
@@ -133,6 +171,4 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
             CreateTrackerViewControllerWrapper()
         }
     }
-    
-    
 }
