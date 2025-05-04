@@ -4,7 +4,7 @@
 //
 //  Created by Marina Kireeva on 30.04.2025.
 //
-import SwiftUI
+
 import UIKit
 
 final class CreateTrackerViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -165,10 +165,5 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         
     }
     
-    // MARK: - Preview
-    struct CreateTrackerViewController_Previews: PreviewProvider {
-        static var previews: some View {
-            CreateTrackerViewControllerWrapper()
-        }
-    }
+   
 }

@@ -10,11 +10,11 @@ import UIKit
 
 // Обертка для предпросмотра UIViewController
 struct CreateTrackerViewControllerWrapper: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> CreateTrackerViewController {
-        return CreateTrackerViewController()
+    func makeUIViewController(context: Context) -> TrackersViewController {
+        return TrackersViewController()
     }
 
-    func updateUIViewController(_ uiViewController: CreateTrackerViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: TrackersViewController, context: Context) {}
 }
 
 struct CreateTrackerViewController_Previews: PreviewProvider {
@@ -23,3 +23,6 @@ struct CreateTrackerViewController_Previews: PreviewProvider {
             .edgesIgnoringSafeArea(.all)
     }
 }
+
+
+

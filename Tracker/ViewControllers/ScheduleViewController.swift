@@ -12,7 +12,7 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate, UITab
     // MARK: - Properties
     let tableView = UITableView(frame: .zero, style: .plain)
     let rowHeight: CGFloat = 75
-    let weekdays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+    let weekDays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -24,7 +24,7 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate, UITab
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.cellReuseIdentifier)
-        tableView.isScrollEnabled = true
+        tableView.isScrollEnabled = false
     }
     
     // MARK: - UI
@@ -38,9 +38,8 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate, UITab
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-
         
-        let numberOfRows = weekdays.count
+        let numberOfRows = weekDays.count
         let tableHeight = rowHeight * CGFloat(numberOfRows)
         let doneButton = UIButton.createNormalStyleButton(title: "Готово")
         view.addSubview(doneButton)
@@ -67,13 +66,13 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate, UITab
     
     // MARK: - TableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        weekdays.count
+        weekDays.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.cellReuseIdentifier, for: indexPath) as? ScheduleTableViewCell else { return UITableViewCell() }
         
-        let day = weekdays[indexPath.row]
+        let day = weekDays[indexPath.row]
         cell.configure(cellText: day)
         cell.contentView.backgroundColor = UIColor(named: "Background [day]")
         

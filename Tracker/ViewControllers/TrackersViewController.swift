@@ -4,10 +4,22 @@
 //
 //  Created by Marina Kireeva on 06.04.2025.
 //
-
+import SwiftUI
 import UIKit
 
 class TrackersViewController: UIViewController {
+    private var categories: [TrackerCategory]? = [
+        TrackerCategory(categoryName: "Example", trackers: [
+            Tracker(id: UUID(), title: "Test", color: .blue, emoji: "🔥", schedule: nil, numberDays: 21),
+            Tracker(id: UUID(), title: "Test2", color: .brown, emoji: "🌸", schedule: nil, numberDays: 5),
+            Tracker(id: UUID(), title: "Test3", color: .green, emoji: "🧡", schedule: nil, numberDays: 5),
+        ]),
+        TrackerCategory(categoryName: "Example 2", trackers: [
+            Tracker(id: UUID(), title: "Test", color: .blue, emoji: "🌺", schedule: nil, numberDays: 21),
+        ]),
+    ]
+    
+    private let trackersCollectionVC = TrackersCollectionViewController()
     
     // MARK: - Properties
     let topNavView: UIView = {
@@ -115,7 +127,29 @@ class TrackersViewController: UIViewController {
             topNavView.bottomAnchor.constraint(equalTo: searchBar.bottomAnchor)
         ])
         
-        getStubScreen(imageName: "star", text: "Что будем отслеживать?", view: self.view)
+        
+        if let categories = categories, !categories.isEmpty {
+            showCollection()
+        } else {
+            getStubScreen(imageName: "star", text: "Что будем отслеживать?", view: self.view)
+        }
+        
+    }
+    
+    private func showCollection() {
+        trackersCollectionVC.trackerCategories = categories
+        addChild(trackersCollectionVC) // Добавление child
+        view.addSubview(trackersCollectionVC.view)
+        trackersCollectionVC.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            trackersCollectionVC.view.topAnchor.constraint(equalTo: topNavView.bottomAnchor, constant: 24),
+            trackersCollectionVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            trackersCollectionVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            trackersCollectionVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+        
+        trackersCollectionVC.didMove(toParent: self)
     }
     
     // MARK: - Actions
@@ -130,6 +164,14 @@ class TrackersViewController: UIViewController {
         dateFormatter.dateFormat = "dd.MM.yyyy"
         let formattedDate = dateFormatter.string(from: selectedDate)
         print("Выбранная дата: \(formattedDate)")
+    }
+    
+    
+    // MARK: - Preview
+    struct CreateTrackerViewController_Previews: PreviewProvider {
+        static var previews: some View {
+            CreateTrackerViewControllerWrapper()
+        }
     }
     
 }
