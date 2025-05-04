@@ -8,11 +8,11 @@
 import Foundation
 
 enum Weekday: String, CaseIterable {
-    case monday = "Mon"
-    case tuesday = "Tue"
-    case wednesday = "Wed"
-    case thursday = "Thu"
-    case friday = "Fri"
-    case saturday = "Sat"
-    case sunday = "Sun"
+    case monday = "Пн"
+    case tuesday = "Вт"
+    case wednesday = "Ср"
+    case thursday = "Чт"
+    case friday = "Пт"
+    case saturday = "Сб"
+    case sunday = "Вс"
 }

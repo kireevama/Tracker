@@ -7,11 +7,21 @@
 
 import UIKit
 
+protocol CreateTrackerDelegate: AnyObject {
+    func addNewTracker(id: UUID, title: String, color: UIColor, emoji: String, schedule: Set<Weekday>?, numberDays: Int)
+}
+
 final class CreateTrackerViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - Properties
     var trackerType: TrackerType?
     let tableView = UITableView(frame: .zero, style: .grouped)
+    let saveButton = UIButton.createNoActiveStyleButton(title: "Создать")
+    let titleTextField = UITextField()
+    
+    weak var delegate: CreateTrackerDelegate?
+    let trackerColors  = (1...17).map { "Color selection \($0)" }
+    let emojis = ["🔥", "🌸", "🧡", "🌺"]
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -36,7 +46,6 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         topLabel.translatesAutoresizingMaskIntoConstraints = false
         
         // titleTextField
-        let titleTextField = UITextField()
         view.addSubview(titleTextField)
         titleTextField.placeholder = "Введите название трекера"
         titleTextField.backgroundColor = UIColor(named: "Background [day]")
@@ -59,8 +68,8 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         // buttons
         let cancelButton = UIButton.createCancelStyleButton(title: "Отменить")
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        let saveButton = UIButton.createNoActiveStyleButton(title: "Создать")
         saveButton.translatesAutoresizingMaskIntoConstraints = false
+//        saveButton.isEnabled = false
         
         // hStack
         let hStack = UIStackView(arrangedSubviews: [cancelButton, saveButton])
@@ -97,7 +106,7 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
         saveButton.addTarget(self, action: #selector(saveButtonTapped(_:)), for: .touchUpInside)
-        
+        titleTextField.addTarget(self, action: #selector(titleTextFieldChanged(_:)), for: .editingChanged)
     }
     
     // MARK: - TableViewDataSource
@@ -161,9 +170,27 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         view.window?.rootViewController?.dismiss(animated: true)
     }
     
-    @objc private func saveButtonTapped(_ sender: UIButton) {
-        
+    @objc private func titleTextFieldChanged(_ sender: UITextField) {
+        saveButton.backgroundColor = UIColor(named: "Black [day]")
+        saveButton.isEnabled = true
     }
     
+    @objc private func saveButtonTapped(_ sender: UIButton) {
+        guard let trackerTitle = titleTextField.text else { return }
+        
+        let colorName = trackerColors.randomElement() ?? "Color selection 1"
+        let color = UIColor(named: colorName) ?? .systemRed
+        guard let emoji = emojis.randomElement() else { return }
+        
+        delegate?.addNewTracker(id: UUID(),
+                                  title: trackerTitle,
+                                  color: color,
+                                  emoji: emoji,
+                                  schedule: nil,
+                                  numberDays: 0)
+        
+        view.window?.rootViewController?.dismiss(animated: true)
+    }
    
+    
 }

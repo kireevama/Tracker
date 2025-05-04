@@ -4,22 +4,20 @@
 //
 //  Created by Marina Kireeva on 06.04.2025.
 //
-import SwiftUI
+
 import UIKit
 
-class TrackersViewController: UIViewController {
+class TrackersViewController: UIViewController, CreateTrackerDelegate {
+    
+    weak var delegate: CreateTrackerDelegate?
+    
     private var categories: [TrackerCategory]? = [
         TrackerCategory(categoryName: "Example", trackers: [
-            Tracker(id: UUID(), title: "Test", color: .blue, emoji: "🔥", schedule: nil, numberDays: 21),
-            Tracker(id: UUID(), title: "Test2", color: .brown, emoji: "🌸", schedule: nil, numberDays: 5),
-            Tracker(id: UUID(), title: "Test3", color: .green, emoji: "🧡", schedule: nil, numberDays: 5),
-        ]),
-        TrackerCategory(categoryName: "Example 2", trackers: [
-            Tracker(id: UUID(), title: "Test", color: .blue, emoji: "🌺", schedule: nil, numberDays: 21),
         ]),
     ]
-    
+
     private let trackersCollectionVC = TrackersCollectionViewController()
+    private let createTrackerVC = CreateTrackerViewController()
     
     // MARK: - Properties
     let topNavView: UIView = {
@@ -152,9 +150,31 @@ class TrackersViewController: UIViewController {
         trackersCollectionVC.didMove(toParent: self)
     }
     
+    func addNewTracker(id: UUID,
+                          title: String,
+                          color: UIColor,
+                          emoji: String,
+                          schedule: Set<Weekday>?,
+                          numberDays: Int) {
+        
+        if let categories = categories {
+            let category = categories[0]
+
+            let newTracker = Tracker(id: id, title: title, color: color, emoji: emoji, schedule: schedule, numberDays: numberDays)
+            let updatedCategory = TrackerCategory(categoryName: category.categoryName,
+                                                  trackers: category.trackers + [newTracker])
+
+            self.categories?[0] = updatedCategory
+        }
+        
+        trackersCollectionVC.trackerCategories = self.categories
+        trackersCollectionVC.collectionView.reloadData()
+    }
+    
     // MARK: - Actions
     @objc private func plusButtonTapped(_ sender: UIButton) {
         let chooseTrackerVC = ChooseTrackerTypeViewController()
+        chooseTrackerVC.delegate = self
         present(chooseTrackerVC, animated: true, completion: nil)
     }
     
@@ -166,12 +186,5 @@ class TrackersViewController: UIViewController {
         print("Выбранная дата: \(formattedDate)")
     }
     
-    
-    // MARK: - Preview
-    struct CreateTrackerViewController_Previews: PreviewProvider {
-        static var previews: some View {
-            CreateTrackerViewControllerWrapper()
-        }
-    }
     
 }

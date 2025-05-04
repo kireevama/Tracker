@@ -9,6 +9,8 @@ import UIKit
 
 final class ChooseTrackerTypeViewController: UIViewController {
     
+    weak var delegate: CreateTrackerDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -58,17 +60,17 @@ final class ChooseTrackerTypeViewController: UIViewController {
         createIrregularEventButton.addTarget(self, action: #selector(self.createIrregularEventButtonTapped(_:)), for: .touchUpInside)
     }
     
-
-    
     @objc private func createHabitButtonTapped(_ sender: UIButton) {
         let createTrackerVC = CreateTrackerViewController()
         createTrackerVC.trackerType = .regular
+        createTrackerVC.delegate = delegate
         present(createTrackerVC, animated: true, completion: nil)
     }
     
     @objc private func createIrregularEventButtonTapped(_ sender: UIButton) {
         let createTrackerVC = CreateTrackerViewController()
         createTrackerVC.trackerType = .irregular
+        createTrackerVC.delegate = delegate
         present(createTrackerVC, animated: true, completion: nil)
     }
 }
