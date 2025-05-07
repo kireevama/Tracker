@@ -9,22 +9,24 @@ import UIKit
 
 class TrackersViewController: UIViewController, CreateTrackerDelegate {
     
+    // MARK: - Properties
     weak var delegate: CreateTrackerDelegate?
     
     private var categories: [TrackerCategory]? = [
         TrackerCategory(categoryName: "Example", trackers: [
         ]),
     ]
-
+    
     private let trackersCollectionVC = TrackersCollectionViewController()
     private let createTrackerVC = CreateTrackerViewController()
     
-    // MARK: - Properties
-    let topNavView: UIView = {
+    private let topNavView: UIView = {
         let topNavView = UIView()
         
         return topNavView
     }()
+    
+    let datePicker = UIDatePicker()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -56,15 +58,9 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
             return button
         }()
         
-        lazy var datePicker: UIDatePicker = {
-            let datePicker = UIDatePicker()
-            datePicker.preferredDatePickerStyle = .compact
-            datePicker.datePickerMode = .date
-            
-            datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
-            
-            return datePicker
-        }()
+        datePicker.preferredDatePickerStyle = .compact
+        datePicker.datePickerMode = .date
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         
         let hStack: UIStackView = {
             let stack = UIStackView()
@@ -101,7 +97,7 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
             return label
         }()
         
-        var searchBar: UISearchBar = {
+        let searchBar: UISearchBar = {
             let searchBar = UISearchBar()
             topNavView.addSubview(searchBar)
             searchBar.placeholder = "Поиск"
@@ -134,6 +130,7 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
         
     }
     
+    // MARK: - Methods
     private func showCollection() {
         trackersCollectionVC.trackerCategories = categories
         addChild(trackersCollectionVC) // Добавление child
@@ -151,22 +148,23 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
     }
     
     func addNewTracker(id: UUID,
-                          title: String,
-                          color: UIColor,
-                          emoji: String,
-                          schedule: Set<Weekday>?,
-                          numberDays: Int) {
+                       title: String,
+                       color: UIColor,
+                       emoji: String,
+                       schedule: Set<WeekDay>?,
+                       completedDays: Int) {
         
         if let categories = categories {
             let category = categories[0]
-
-            let newTracker = Tracker(id: id, title: title, color: color, emoji: emoji, schedule: schedule, numberDays: numberDays)
+            
+            let newTracker = Tracker(id: id, title: title, color: color, emoji: emoji, schedule: schedule, completedDays: completedDays)
             let updatedCategory = TrackerCategory(categoryName: category.categoryName,
                                                   trackers: category.trackers + [newTracker])
-
+            
             self.categories?[0] = updatedCategory
         }
         
+        trackersCollectionVC.selectedDate = datePicker.date
         trackersCollectionVC.trackerCategories = self.categories
         trackersCollectionVC.collectionView.reloadData()
     }
@@ -183,7 +181,8 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yyyy"
         let formattedDate = dateFormatter.string(from: selectedDate)
-        print("Выбранная дата: \(formattedDate)")
+        
+        trackersCollectionVC.selectedDate = datePicker.date
     }
     
     

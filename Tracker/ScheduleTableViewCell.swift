@@ -11,8 +11,9 @@ class ScheduleTableViewCell: UITableViewCell {
     
     // MARK: - Properties
     static let cellReuseIdentifier = "scheduleTableViewCell"
-    let label = UILabel()
-    let cellSwitch = UISwitch()
+    private let label = UILabel()
+    private let cellSwitch = UISwitch()
+    private var switchChangedCallback: ((Bool) -> Void)?
     
     
     // MARK: - Init
@@ -42,13 +43,20 @@ class ScheduleTableViewCell: UITableViewCell {
             hStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             hStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
         ])
+        
+        cellSwitch.addTarget(self, action: #selector(cellSwitchValueChanged), for: .valueChanged)
     }
     
     // MARK: - Metods
-    func configure(cellText: String) {
+    func configure(cellText: String, isOn: Bool, switchChanged: @escaping (Bool) -> Void) {
         label.text = cellText
+        cellSwitch.isOn = isOn
+        self.switchChangedCallback = switchChanged
     }
     
+    @objc private func cellSwitchValueChanged(_ sender: UISwitch) {
+        switchChangedCallback?(sender.isOn)
+    }
     
 }
 

@@ -12,10 +12,10 @@ class HabitTableViewCell: UITableViewCell {
     // MARK: - Properties
     static let cellReuseIdentifier = "habitTableViewCell"
     
-    let titleLabel = UILabel()
-    let valueLabel = UILabel()
-    let cellImageView = UIImageView()
-    let separatorView = UIView()
+    private let titleLabel = UILabel()
+    private let valueLabel = UILabel()
+    private let cellImageView = UIImageView()
+    private let separatorView = UIView()
     
     // MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

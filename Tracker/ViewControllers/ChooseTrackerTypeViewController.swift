@@ -18,6 +18,7 @@ final class ChooseTrackerTypeViewController: UIViewController {
         setupUI()
     }
     
+    // MARK: - UI
     private func setupUI() {
         let topLabel = UILabel.createNavAppStyleLabel(title: "Создание трекера")
         view.addSubview(topLabel)
@@ -60,6 +61,7 @@ final class ChooseTrackerTypeViewController: UIViewController {
         createIrregularEventButton.addTarget(self, action: #selector(self.createIrregularEventButtonTapped(_:)), for: .touchUpInside)
     }
     
+    // MARK: - Actions
     @objc private func createHabitButtonTapped(_ sender: UIButton) {
         let createTrackerVC = CreateTrackerViewController()
         createTrackerVC.trackerType = .regular

@@ -8,20 +8,21 @@
 import UIKit
 
 protocol CreateTrackerDelegate: AnyObject {
-    func addNewTracker(id: UUID, title: String, color: UIColor, emoji: String, schedule: Set<Weekday>?, numberDays: Int)
+    func addNewTracker(id: UUID, title: String, color: UIColor, emoji: String, schedule: Set<WeekDay>?, completedDays: Int)
 }
 
 final class CreateTrackerViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - Properties
     var trackerType: TrackerType?
-    let tableView = UITableView(frame: .zero, style: .grouped)
-    let saveButton = UIButton.createNoActiveStyleButton(title: "Создать")
-    let titleTextField = UITextField()
+    private let tableView = UITableView(frame: .zero, style: .grouped)
+    private let saveButton = UIButton.createNoActiveStyleButton(title: "Создать")
+    private let titleTextField = UITextField()
     
     weak var delegate: CreateTrackerDelegate?
-    let trackerColors  = (1...17).map { "Color selection \($0)" }
-    let emojis = ["🔥", "🌸", "🧡", "🌺"]
+    private var selectedSchedule: Set<WeekDay>?
+    private let trackerColors  = (1...17).map { "Color selection \($0)" }
+    private let emojis = ["🔥", "🌸", "🧡", "🌺"]
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -69,7 +70,7 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         let cancelButton = UIButton.createCancelStyleButton(title: "Отменить")
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         saveButton.translatesAutoresizingMaskIntoConstraints = false
-//        saveButton.isEnabled = false
+        saveButton.isEnabled = false
         
         // hStack
         let hStack = UIStackView(arrangedSubviews: [cancelButton, saveButton])
@@ -162,6 +163,9 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         } else if trackerType == .regular && indexPath.row == 1 {
             // Переход на экран расписания
             let scheduleVC = ScheduleViewController()
+            scheduleVC.finalSchedule = { [weak self] selected in
+                    self?.selectedSchedule = selected
+            }
             present(scheduleVC, animated: true, completion: nil)
         }
     }
@@ -186,10 +190,12 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
                                   title: trackerTitle,
                                   color: color,
                                   emoji: emoji,
-                                  schedule: nil,
-                                  numberDays: 0)
+                                  schedule: selectedSchedule,
+                                  completedDays: 0)
         
         view.window?.rootViewController?.dismiss(animated: true)
+        
+        print("График: \(selectedSchedule)")
     }
    
     

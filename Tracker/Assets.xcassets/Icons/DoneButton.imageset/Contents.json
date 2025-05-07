@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "PropertyDone.png",
+      "filename" : "DoneButton.svg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "PropertyDone-2.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "PropertyDone-3.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

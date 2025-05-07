@@ -9,9 +9,12 @@ import UIKit
 
 class TrackersCollectionViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
+    var selectedDate = Date()
     var trackerCategories: [TrackerCategory]? = nil
+    private var completedTrackers: [TrackerRecord] = []
+//    private var trackerId: UUID?
     
-    let layout = UICollectionViewFlowLayout()
+    private let layout = UICollectionViewFlowLayout()
     lazy var collectionView: UICollectionView = {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
@@ -30,7 +33,7 @@ class TrackersCollectionViewController: UIViewController, UICollectionViewDelega
 
     }
 
-    func setupUI() {
+    private func setupUI() {
         
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 16
@@ -74,10 +77,15 @@ class TrackersCollectionViewController: UIViewController, UICollectionViewDelega
                 return UICollectionViewCell()
             }
         
-        cell.configure(title: tracker.title,
-                       color: tracker.color,
-                       emoji: tracker.emoji,
-                       numberDays: tracker.numberDays)
+        let isCompletedToday = isTrackerCompletedToday(id: tracker.id)
+        let completedDays = completedTrackers.filter { $0.id == tracker.id }.count
+        
+        cell.configure(with: tracker,
+                       isCompletedToday: isCompletedToday,
+                       completedDays: completedDays,
+                       indexPath: indexPath)
+        
+        cell.delegate = self
         
         return cell
     }
@@ -104,9 +112,30 @@ class TrackersCollectionViewController: UIViewController, UICollectionViewDelega
         return CGSize(width: itemSize, height: 18)
     }
     
+    private func isTrackerCompletedToday(id: UUID) -> Bool {
+        completedTrackers.contains { trackerRecord in
+            let isSameDate = Calendar.current.isDate(trackerRecord.date, inSameDayAs: selectedDate)
+            return trackerRecord.id == id && isSameDate
+        }
+    }
     
+    
+}
 
+extension TrackersCollectionViewController: TrackerCellDelegate {
+    func completedTracker(id: UUID, at indexPath: IndexPath) {
+        let trackerRecord = TrackerRecord(id: id, date: selectedDate)
+        completedTrackers.append(trackerRecord)
+        
+        collectionView.reloadItems(at: [indexPath])
+    }
     
-    
-    
+    func uncompletedTracker(id: UUID, at indexPath: IndexPath) {
+        completedTrackers.removeAll { trackerRecord in
+            let isSameDate = Calendar.current.isDate(trackerRecord.date, inSameDayAs: selectedDate)
+            return trackerRecord.id == id && isSameDate
+        }
+        
+        collectionView.reloadItems(at: [indexPath])
+    }
 }

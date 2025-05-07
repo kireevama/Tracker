@@ -39,6 +39,7 @@ final class SplashViewController: UIViewController {
         ])
     }
     
+    // MARK: - Methods
     private func switchToTabBarController() {
         // Получаем экземпляр `window` приложения
         guard let window = UIApplication.shared.windows.first else {

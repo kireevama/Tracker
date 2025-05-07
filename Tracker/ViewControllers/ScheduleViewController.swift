@@ -10,9 +10,11 @@ import UIKit
 final class ScheduleViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - Properties
-    let tableView = UITableView(frame: .zero, style: .plain)
-    let rowHeight: CGFloat = 75
-    let weekDays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+    private let tableView = UITableView(frame: .zero, style: .plain)
+    private let rowHeight: CGFloat = 75
+    private var selectedDays: Set<WeekDay> = []
+    var finalSchedule: ((Set<WeekDay>) -> Void)?
+
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -39,7 +41,8 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate, UITab
         tableView.layer.masksToBounds = true
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
-        let numberOfRows = weekDays.count
+        let numberOfRows = WeekDay.allCases.count
+        
         let tableHeight = rowHeight * CGFloat(numberOfRows)
         let doneButton = UIButton.createNormalStyleButton(title: "Готово")
         view.addSubview(doneButton)
@@ -62,18 +65,30 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate, UITab
             doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
         ])
         
+        doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        
     }
     
     // MARK: - TableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        weekDays.count
+        WeekDay.allCases.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.cellReuseIdentifier, for: indexPath) as? ScheduleTableViewCell else { return UITableViewCell() }
         
-        let day = weekDays[indexPath.row]
-        cell.configure(cellText: day)
+        let day = WeekDay.allCases[indexPath.row]
+        print("day: \(day)")
+        let dayName = day.dayName
+        cell.configure(cellText: dayName, isOn: selectedDays.contains(day)) { isOn in
+            if isOn {
+                self.selectedDays.insert(day)
+            } else {
+                self.selectedDays.remove(day)
+            }
+        }
+        
+        cell.selectionStyle = .none
         cell.contentView.backgroundColor = UIColor(named: "Background [day]")
         
         return cell
@@ -84,7 +99,10 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     @objc private func doneButtonTapped(_ sender: UIButton) {
-        
+        finalSchedule?(selectedDays)
+        dismiss(animated: true)
+        print("Выбранные дни: \(selectedDays)")
+
     }
     
     

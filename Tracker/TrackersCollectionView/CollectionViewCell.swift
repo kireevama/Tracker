@@ -7,17 +7,27 @@
 
 import UIKit
 
-class CollectionViewCell: UICollectionViewCell {
+protocol TrackerCellDelegate: AnyObject {
+    func completedTracker(id: UUID, at indexPath: IndexPath)
+    func uncompletedTracker(id: UUID, at indexPath: IndexPath)
+}
+
+final class CollectionViewCell: UICollectionViewCell {
     
+    // MARK: - Properties
     static let cellReuseIdentifier = "trackerCollectionViewCell"
-    let emojiLabel = UILabel()
-    let titleLabel = UILabel()
-    let dayCountLabel = UILabel()
-    let plusButton = UIButton()
-    let backgroundCardView = UIView()
+    private let emojiLabel = UILabel()
+    private let titleLabel = UILabel()
+    private let dayCountLabel = UILabel()
+    private let plusButton = UIButton()
+    private let backgroundCardView = UIView()
     
-    weak var delegate: UICollectionViewDelegate?
+    weak var delegate: TrackerCellDelegate?
+    private var isCompletedToday = false
+    private var trackerId: UUID?
+    private var indexPath: IndexPath?
     
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -28,6 +38,7 @@ class CollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - UI
     private func setupUI() {
         // emojiLabel
         emojiLabel.textAlignment = .center
@@ -59,12 +70,11 @@ class CollectionViewCell: UICollectionViewCell {
         dayCountLabel.translatesAutoresizingMaskIntoConstraints = false
         
         // plusButton
-//        plusButton.setImage(UIImage(named: "PropertyPlus"), for: .normal)
-        plusButton.setImage(UIImage(named: "PropertyPlus")?.withRenderingMode(.alwaysTemplate), for: .normal)
         plusButton.layer.cornerRadius = 17
         plusButton.clipsToBounds = true
         plusButton.backgroundColor = UIColor(named: "White [day]")
         plusButton.translatesAutoresizingMaskIntoConstraints = false
+        plusButton.addTarget(self, action: #selector(trackButtonTapped), for: .touchUpInside)
         
         // hStack
         let hStack = UIStackView()
@@ -112,17 +122,33 @@ class CollectionViewCell: UICollectionViewCell {
             mainStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0),
             mainStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0),
             mainStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
-
+            
         ])
     }
     
-    func configure(title: String, color: UIColor, emoji: String, numberDays: Int) {
-        titleLabel.text = title
-        backgroundCardView.backgroundColor = color
-        plusButton.tintColor = color
-        emojiLabel.text = emoji
-        dayCountLabel.text = "\(numberDays) \(getDayLabel(for: numberDays))"
+    // MARK: - Properties
+    
+    func configure(with tracker: Tracker, isCompletedToday: Bool, completedDays: Int ,indexPath: IndexPath) {
+        titleLabel.text = tracker.title
+        backgroundCardView.backgroundColor = tracker.color
+        plusButton.tintColor = tracker.color
+        emojiLabel.text = tracker.emoji
+        dayCountLabel.text = "\(completedDays) \(getDayLabel(for: completedDays))"
+        
+        self.isCompletedToday = isCompletedToday
+        self.indexPath = indexPath
+        self.trackerId = tracker.id
+        
+        if isCompletedToday {
+            plusButton.backgroundColor = tracker.color
+            plusButton.alpha = 0.3
+            plusButton.setImage(UIImage(named: "DoneButton"), for: .normal)
+        } else {
+            plusButton.setImage(UIImage(named: "PropertyPlus")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        }
+        
     }
+    
     
     private func getDayLabel(for days: Int) -> String {
         switch days {
@@ -131,6 +157,22 @@ class CollectionViewCell: UICollectionViewCell {
         default: return "дней"
         }
     }
-
+    
+    @objc private func trackButtonTapped() {
+        guard let trackerId = trackerId,
+        let indexPath = indexPath
+        else {
+            assertionFailure("CollectionViewCell: not received trackerId or indexPath")
+            return }
+        
+        if isCompletedToday {
+            delegate?.uncompletedTracker(id: trackerId, at: indexPath)
+        } else {
+            delegate?.completedTracker(id: trackerId, at: indexPath)
+        }
+    }
+    
     
 }
+
+
