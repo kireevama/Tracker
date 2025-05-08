@@ -12,9 +12,53 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
     // MARK: - Properties
     weak var delegate: CreateTrackerDelegate?
     
-    private var categories: [TrackerCategory]? = [
-        TrackerCategory(categoryName: "Example", trackers: [
-        ]),
+    private var categories: [TrackerCategory]?
+    private var visibleCategories: [TrackerCategory]?
+    private let defaultCategory = "Важное"
+    
+    // Моковые данные для трекеров
+    let mockTrackers: [Tracker] = [
+        Tracker(id: UUID(),
+                title: "Пить воду",
+                color: UIColor(named: "Color selection 1") ?? .green,
+                emoji: "💧",
+                schedule: [.monday, .wednesday, .friday],
+                completedDays: 3),
+        
+        Tracker(id: UUID(),
+                title: "Утренние упражнения",
+                color: UIColor(named: "Color selection 2") ?? .green,
+                emoji: "💪",
+                schedule: [.monday, .tuesday, .thursday],
+                completedDays: 5),
+        
+        Tracker(id: UUID(),
+                title: "Чтение книги",
+                color: UIColor(named: "Color selection 3") ?? .green,
+                emoji: "📚",
+                schedule: [.tuesday, .thursday],
+                completedDays: 2),
+        
+        Tracker(id: UUID(),
+                title: "Медитация",
+                color: UIColor(named: "Color selection 4") ?? .green,
+                emoji: "🧘‍♀️",
+                schedule: [.monday, .friday],
+                completedDays: 7),
+        
+        Tracker(id: UUID(),
+                title: "Подготовка к экзаменам",
+                color: UIColor(named: "Color selection 5") ?? .green,
+                emoji: "📖",
+                schedule: [.wednesday, .saturday],
+                completedDays: 1),
+        
+        Tracker(id: UUID(),
+                title: "Прогулки на свежем воздухе",
+                color: UIColor(named: "Color selection 6") ?? .green,
+                emoji: "🚶‍♀️",
+                schedule: [.sunday],
+                completedDays: 4)
     ]
     
     private let trackersCollectionVC = TrackersCollectionViewController()
@@ -26,11 +70,30 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
         return topNavView
     }()
     
-    let datePicker = UIDatePicker()
+    private let datePicker = UIDatePicker()
+    private let searchBar = UISearchBar()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Разбиение на категории
+        categories = [
+            TrackerCategory(categoryName: "Здоровье", trackers: [
+                mockTrackers[0], // Пить воду
+                mockTrackers[1], // Утренние упражнения
+                mockTrackers[3]  // Медитация
+            ]),
+            
+            TrackerCategory(categoryName: "Учеба", trackers: [
+                mockTrackers[4] // Подготовка к экзаменам
+            ]),
+            
+            TrackerCategory(categoryName: "Что-то еще", trackers: [
+                mockTrackers[2], // Чтение книги
+                mockTrackers[5]  // Прогулки на свежем воздухе
+            ])
+        ]
         
         view.addSubview(topNavView)
         setupUI()
@@ -58,6 +121,9 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
             return button
         }()
         
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2  // Установка понедельника первым днем недели
+        datePicker.calendar = calendar
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
@@ -97,21 +163,18 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
             return label
         }()
         
-        let searchBar: UISearchBar = {
-            let searchBar = UISearchBar()
-            topNavView.addSubview(searchBar)
-            searchBar.placeholder = "Поиск"
-            searchBar.backgroundImage = UIImage() // убираем линии
-            
-            searchBar.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                searchBar.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 7),
-                searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
-            ])
-            
-            return searchBar
-        }()
+        topNavView.addSubview(searchBar)
+        searchBar.placeholder = "Поиск"
+        searchBar.backgroundImage = UIImage() // убираем линии
+        searchBar.delegate = self
+        searchBar.showsCancelButton = false
+        
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            searchBar.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 7),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+        ])
         
         topNavView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -169,6 +232,33 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
         trackersCollectionVC.collectionView.reloadData()
     }
     
+    private func reloadVisibleCategories() {
+        let selectedDate = datePicker.date
+        let calendar = Calendar.current
+        let filterWeekday = calendar.component(.weekday, from: selectedDate)
+        let filterText = (searchBar.text ?? "").lowercased()
+        
+        visibleCategories = categories?.compactMap { category in
+                let trackers = category.trackers.filter { tracker in
+                    let textCondition = filterText.isEmpty ||
+                                        tracker.title.lowercased().contains(filterText)
+                    let dateCondition = tracker.schedule?.contains { (weekDay: WeekDay) in
+                        weekDay.rawValue == filterWeekday
+                    } == true
+                    
+                    return textCondition && dateCondition
+                }
+                
+                return trackers.isEmpty ? nil : TrackerCategory(
+                    categoryName: category.categoryName,
+                    trackers: trackers
+                )
+            }
+        
+        trackersCollectionVC.trackerCategories = visibleCategories
+        trackersCollectionVC.collectionView.reloadData()
+    }
+    
     // MARK: - Actions
     @objc private func plusButtonTapped(_ sender: UIButton) {
         let chooseTrackerVC = ChooseTrackerTypeViewController()
@@ -181,9 +271,27 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yyyy"
         let formattedDate = dateFormatter.string(from: selectedDate)
+        trackersCollectionVC.selectedDate = selectedDate
         
-        trackersCollectionVC.selectedDate = datePicker.date
+        reloadVisibleCategories()
     }
     
+    
+}
+
+extension TrackersViewController: UISearchBarDelegate {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.showsCancelButton = true
+    }
+    
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = nil
+        searchBar.resignFirstResponder()  // Скрыть клавиатуру
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        reloadVisibleCategories()
+    }
     
 }

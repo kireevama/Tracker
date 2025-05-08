@@ -12,7 +12,6 @@ class TrackersCollectionViewController: UIViewController, UICollectionViewDelega
     var selectedDate = Date()
     var trackerCategories: [TrackerCategory]? = nil
     private var completedTrackers: [TrackerRecord] = []
-//    private var trackerId: UUID?
     
     private let layout = UICollectionViewFlowLayout()
     lazy var collectionView: UICollectionView = {

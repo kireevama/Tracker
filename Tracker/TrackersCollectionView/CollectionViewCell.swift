@@ -144,6 +144,8 @@ final class CollectionViewCell: UICollectionViewCell {
             plusButton.alpha = 0.3
             plusButton.setImage(UIImage(named: "DoneButton"), for: .normal)
         } else {
+            plusButton.backgroundColor = UIColor(named: "White [day]")
+            plusButton.alpha = 1
             plusButton.setImage(UIImage(named: "PropertyPlus")?.withRenderingMode(.alwaysTemplate), for: .normal)
         }
         

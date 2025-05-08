@@ -119,7 +119,7 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         guard let cell = tableView.dequeueReusableCell(withIdentifier: HabitTableViewCell.cellReuseIdentifier, for: indexPath) as? HabitTableViewCell else { return UITableViewCell() }
         
         if indexPath.row == 0 {
-            cell.configure(title: "Категория", value: "Важное", isShowseparator: false)
+            cell.configure(title: "Категория", value: nil, isShowseparator: false)
         } else {
             cell.configure(title: "Расписание", value: nil, isShowseparator: true)
         }
@@ -183,7 +183,7 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         guard let trackerTitle = titleTextField.text else { return }
         
         let colorName = trackerColors.randomElement() ?? "Color selection 1"
-        let color = UIColor(named: colorName) ?? .systemRed
+        let color = UIColor(named: colorName) ?? .systemGreen
         guard let emoji = emojis.randomElement() else { return }
         
         delegate?.addNewTracker(id: UUID(),
@@ -194,8 +194,6 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
                                   completedDays: 0)
         
         view.window?.rootViewController?.dismiss(animated: true)
-        
-        print("График: \(selectedSchedule)")
     }
    
     
