@@ -153,7 +153,14 @@ final class CollectionViewCell: UICollectionViewCell {
     
     
     private func getDayLabel(for days: Int) -> String {
-        switch days {
+        let lastTwoDigits = days % 100
+        let lastDigit = days % 10
+        
+        if lastTwoDigits >= 11 && lastTwoDigits <= 14 {
+                return "дней"
+            }
+        
+        switch lastDigit {
         case 1: return "день"
         case 2...4: return "дня"
         default: return "дней"

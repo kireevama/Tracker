@@ -73,6 +73,8 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
     private let datePicker = UIDatePicker()
     private let searchBar = UISearchBar()
     
+    private var stubView: UIStackView?
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -188,7 +190,8 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
         if let categories = categories, !categories.isEmpty {
             showCollection()
         } else {
-            getStubScreen(imageName: "star", text: "Что будем отслеживать?", view: self.view)
+            stubView = getStubScreen(imageName: "star",
+                                     text: "Что будем отслеживать?", view: self.view)
         }
         
     }
@@ -239,24 +242,36 @@ class TrackersViewController: UIViewController, CreateTrackerDelegate {
         let filterText = (searchBar.text ?? "").lowercased()
         
         visibleCategories = categories?.compactMap { category in
-                let trackers = category.trackers.filter { tracker in
-                    let textCondition = filterText.isEmpty ||
-                                        tracker.title.lowercased().contains(filterText)
-                    let dateCondition = tracker.schedule?.contains { (weekDay: WeekDay) in
-                        weekDay.rawValue == filterWeekday
-                    } == true
-                    
-                    return textCondition && dateCondition
-                }
+            let trackers = category.trackers.filter { tracker in
+                let textCondition = filterText.isEmpty ||
+                tracker.title.lowercased().contains(filterText)
+                let dateCondition = tracker.schedule?.contains { (weekDay: WeekDay) in
+                    weekDay.rawValue == filterWeekday
+                } == true
                 
-                return trackers.isEmpty ? nil : TrackerCategory(
-                    categoryName: category.categoryName,
-                    trackers: trackers
-                )
+                return textCondition && dateCondition
             }
+            
+            return trackers.isEmpty ? nil : TrackerCategory(
+                categoryName: category.categoryName,
+                trackers: trackers
+            )
+        }
         
         trackersCollectionVC.trackerCategories = visibleCategories
         trackersCollectionVC.collectionView.reloadData()
+        
+        reloadStubScreen()
+    }
+    
+    private func reloadStubScreen() {
+        stubView?.removeFromSuperview()
+        
+        if visibleCategories?.isEmpty == true {
+            stubView = getStubScreen(imageName: "empty",
+                                     text: "Ничего не найдено", view: self.view)
+        }
+        
     }
     
     // MARK: - Actions
@@ -287,7 +302,7 @@ extension TrackersViewController: UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = nil
-        searchBar.resignFirstResponder()  // Скрыть клавиатуру
+        searchBar.resignFirstResponder() // Скрыть клавиатуру
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
