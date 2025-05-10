@@ -7,13 +7,23 @@
 
 import UIKit
 
-class TrackersCollectionViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+final class TrackersCollectionViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var selectedDate = Date()
     var trackerCategories: [TrackerCategory]? = nil
     private var completedTrackers: [TrackerRecord] = []
     
-    private let layout = UICollectionViewFlowLayout()
+    private lazy var layout: UICollectionViewFlowLayout = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 16
+        layout.minimumInteritemSpacing = 7
+        layout.sectionInset = UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0)
+        let itemSize = getItemSize()
+        layout.itemSize = CGSize(width: itemSize, height: itemSize - 19)
+        return layout
+    }()
+    
     lazy var collectionView: UICollectionView = {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
@@ -23,24 +33,18 @@ class TrackersCollectionViewController: UIViewController, UICollectionViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupUI()
-        
+        configureCollectionView()
+        layoutCollectionView()
+    }
+
+    private func configureCollectionView() {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.cellReuseIdentifier)
         collectionView.register(TrackerSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSectionHeader.reuseIdentifier)
-
     }
-
-    private func setupUI() {
-        
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 16
-        layout.minimumInteritemSpacing = 7
-        let itemSize = getItemSize()
-        layout.itemSize = CGSize(width: itemSize, height: itemSize - 19)
-        layout.sectionInset = UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0)
-        
+    
+    private func layoutCollectionView() {
         view.addSubview(collectionView)
        
         NSLayoutConstraint.activate([
@@ -59,7 +63,6 @@ class TrackersCollectionViewController: UIViewController, UICollectionViewDelega
         return itemSize
     }
     
-
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         trackerCategories?.count ?? 0
     }
@@ -117,8 +120,6 @@ class TrackersCollectionViewController: UIViewController, UICollectionViewDelega
             return trackerRecord.id == id && isSameDate
         }
     }
-    
-    
 }
 
 extension TrackersCollectionViewController: TrackerCellDelegate {

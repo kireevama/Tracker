@@ -25,6 +25,8 @@
 		479D6E842DA2956C0076934A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 479D6E832DA2956C0076934A /* Assets.xcassets */; };
 		479D6E902DA2B10E0076934A /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479D6E8F2DA2B10E0076934A /* TabBarController.swift */; };
 		479D6E932DA2F1A90076934A /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479D6E922DA2F1A90076934A /* StatisticViewController.swift */; };
+		47AC379E2DCFA83C00D3A626 /* TrackerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47AC379D2DCFA83C00D3A626 /* TrackerMock.swift */; };
+		47AC37A02DCFB14A00D3A626 /* Date+Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47AC379F2DCFB14A00D3A626 /* Date+Formatter.swift */; };
 		47ACB42B2DC2561B00A2550A /* CreateTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47ACB42A2DC2561B00A2550A /* CreateTrackerViewController.swift */; };
 		47ACB4312DC2933300A2550A /* HabitTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47ACB4302DC2933300A2550A /* HabitTableViewCell.swift */; };
 		47ACB4342DC2A25D00A2550A /* TrackerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47ACB4332DC2A25D00A2550A /* TrackerType.swift */; };
@@ -54,6 +56,8 @@
 		479D6E882DA2956C0076934A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		479D6E8F2DA2B10E0076934A /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		479D6E922DA2F1A90076934A /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
+		47AC379D2DCFA83C00D3A626 /* TrackerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerMock.swift; sourceTree = "<group>"; };
+		47AC379F2DCFB14A00D3A626 /* Date+Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Formatter.swift"; sourceTree = "<group>"; };
 		47ACB42A2DC2561B00A2550A /* CreateTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTrackerViewController.swift; sourceTree = "<group>"; };
 		47ACB4302DC2933300A2550A /* HabitTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitTableViewCell.swift; sourceTree = "<group>"; };
 		47ACB4332DC2A25D00A2550A /* TrackerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerType.swift; sourceTree = "<group>"; };
@@ -97,6 +101,7 @@
 				474225852DAAF88B00D71D40 /* UIViewController+StubScreen.swift */,
 				4794168F2DC16F2100798BC5 /* UIButton+Extensions.swift */,
 				479416912DC1732800798BC5 /* UILabel+NavAppStyle.swift */,
+				47AC379F2DCFB14A00D3A626 /* Date+Formatter.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -120,6 +125,7 @@
 		479D6E792DA295680076934A /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				47AC379C2DCFA7C000D3A626 /* Mocks */,
 				4727276E2DC3F9450059DF99 /* Preview */,
 				47ACB4322DC2A24900A2550A /* Enums */,
 				47ACB6BA2DBBA20C0062734D /* Models */,
@@ -156,6 +162,14 @@
 				4727276C2DC3F4EE0059DF99 /* ScheduleViewController.swift */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		47AC379C2DCFA7C000D3A626 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				47AC379D2DCFA83C00D3A626 /* TrackerMock.swift */,
+			);
+			path = Mocks;
 			sourceTree = "<group>";
 		};
 		47ACB4322DC2A24900A2550A /* Enums */ = {
@@ -251,11 +265,13 @@
 				472727782DC5196F0059DF99 /* WeekDay.swift in Sources */,
 				479D6E7F2DA295680076934A /* TrackersViewController.swift in Sources */,
 				4727276D2DC3F4EE0059DF99 /* ScheduleViewController.swift in Sources */,
+				47AC37A02DCFB14A00D3A626 /* Date+Formatter.swift in Sources */,
 				47ACB4342DC2A25D00A2550A /* TrackerType.swift in Sources */,
 				4794168E2DC1581C00798BC5 /* ChooseTrackerTypeViewController.swift in Sources */,
 				479D6E902DA2B10E0076934A /* TabBarController.swift in Sources */,
 				479D6E7B2DA295680076934A /* AppDelegate.swift in Sources */,
 				4727276B2DC38F5B0059DF99 /* Preview.swift in Sources */,
+				47AC379E2DCFA83C00D3A626 /* TrackerMock.swift in Sources */,
 				47ACB6C02DBBA6D10062734D /* TrackerRecord.swift in Sources */,
 				47ACB6BC2DBBA2470062734D /* Tracker.swift in Sources */,
 				479416902DC16F2100798BC5 /* UIButton+Extensions.swift in Sources */,

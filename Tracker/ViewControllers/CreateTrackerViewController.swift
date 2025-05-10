@@ -15,9 +15,12 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
     
     // MARK: - Properties
     var trackerType: TrackerType?
+    private var topLabel = UILabel()
     private let tableView = UITableView(frame: .zero, style: .grouped)
     private let saveButton = UIButton.createNoActiveStyleButton(title: "Создать")
+    private let cancelButton = UIButton.createCancelStyleButton(title: "Отменить")
     private let titleTextField = UITextField()
+    private let hStack  = UIStackView()
     
     weak var delegate: CreateTrackerDelegate?
     private var selectedSchedule: Set<WeekDay>?
@@ -29,23 +32,24 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         super.viewDidLoad()
         
         view.backgroundColor = UIColor(named: "White [day]")
-        setupUI()
         
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(HabitTableViewCell.self, forCellReuseIdentifier: HabitTableViewCell.cellReuseIdentifier)
-        tableView.separatorStyle = .none
+        setupTopLabel()
+        setupTitleTextField()
+        configureTableView()
+        setupButtons()
+        setupConstraints()
     }
     
     // MARK: - UI
-    private func setupUI() {
-        
+    private func setupTopLabel() {
         // topLabel
         let title = trackerType == .regular ? "Новая привычка" : "Новое нерегулярное событие"
-        let topLabel = UILabel.createNavAppStyleLabel(title: title)
+        topLabel = UILabel.createNavAppStyleLabel(title: title)
         view.addSubview(topLabel)
         topLabel.translatesAutoresizingMaskIntoConstraints = false
-        
+    }
+    
+    private func setupTitleTextField() {
         // titleTextField
         view.addSubview(titleTextField)
         titleTextField.placeholder = "Введите название трекера"
@@ -54,26 +58,30 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         titleTextField.textColor = UIColor(named: "Gray")
         titleTextField.layer.cornerRadius = 16
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
+        titleTextField.addTarget(self, action: #selector(titleTextFieldChanged(_:)), for: .editingChanged)
         
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 1))
         titleTextField.leftView = paddingView
         titleTextField.rightView = paddingView
         titleTextField.leftViewMode = .always
         titleTextField.rightViewMode = .always
+    }
+    
+    private func configureTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(HabitTableViewCell.self, forCellReuseIdentifier: HabitTableViewCell.cellReuseIdentifier)
         
-        // tableView
         view.addSubview(tableView)
+        tableView.separatorStyle = .none
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .clear
-        
-        // buttons
-        let cancelButton = UIButton.createCancelStyleButton(title: "Отменить")
-        cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        saveButton.translatesAutoresizingMaskIntoConstraints = false
-        saveButton.isEnabled = false
-        
+    }
+    
+    private func setupButtons() {
         // hStack
-        let hStack = UIStackView(arrangedSubviews: [cancelButton, saveButton])
+        hStack.addArrangedSubview(cancelButton)
+        hStack.addArrangedSubview(saveButton)
         view.addSubview(hStack)
         hStack.axis = .horizontal
         hStack.spacing = 8
@@ -81,7 +89,16 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         hStack.alignment = .center
         hStack.translatesAutoresizingMaskIntoConstraints = false
         
-        // Constraints
+        // buttons
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
+        
+        saveButton.translatesAutoresizingMaskIntoConstraints = false
+        saveButton.isEnabled = false
+        saveButton.addTarget(self, action: #selector(saveButtonTapped(_:)), for: .touchUpInside)
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             topLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 26),
             topLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -104,10 +121,6 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
             hStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             hStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0)
         ])
-        
-        cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
-        saveButton.addTarget(self, action: #selector(saveButtonTapped(_:)), for: .touchUpInside)
-        titleTextField.addTarget(self, action: #selector(titleTextFieldChanged(_:)), for: .editingChanged)
     }
     
     // MARK: - TableViewDataSource
@@ -151,7 +164,7 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
             cell.contentView.clipsToBounds = true
         }
         
-
+        
     }
     
     // MARK: - TableViewDelegate
@@ -164,7 +177,7 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
             // Переход на экран расписания
             let scheduleVC = ScheduleViewController()
             scheduleVC.finalSchedule = { [weak self] selected in
-                    self?.selectedSchedule = selected
+                self?.selectedSchedule = selected
             }
             present(scheduleVC, animated: true, completion: nil)
         }
@@ -187,14 +200,14 @@ final class CreateTrackerViewController: UIViewController, UITableViewDelegate, 
         guard let emoji = emojis.randomElement() else { return }
         
         delegate?.addNewTracker(id: UUID(),
-                                  title: trackerTitle,
-                                  color: color,
-                                  emoji: emoji,
-                                  schedule: selectedSchedule,
-                                  completedDays: 0)
+                                title: trackerTitle,
+                                color: color,
+                                emoji: emoji,
+                                schedule: selectedSchedule,
+                                completedDays: 0)
         
         view.window?.rootViewController?.dismiss(animated: true)
     }
-   
+    
     
 }

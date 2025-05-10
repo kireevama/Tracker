@@ -21,6 +21,8 @@ final class CollectionViewCell: UICollectionViewCell {
     private let dayCountLabel = UILabel()
     private let plusButton = UIButton()
     private let backgroundCardView = UIView()
+    private let hStack = UIStackView()
+    private let mainStack = UIStackView()
     
     weak var delegate: TrackerCellDelegate?
     private var isCompletedToday = false
@@ -40,6 +42,15 @@ final class CollectionViewCell: UICollectionViewCell {
     
     // MARK: - UI
     private func setupUI() {
+        setupBackgroundCardView()
+        setupLabel()
+        setupPlusButton()
+        setupStacks()
+        setupConstraints()
+    }
+    
+    // MARK: - Metods
+    private func setupBackgroundCardView() {
         // emojiLabel
         emojiLabel.textAlignment = .center
         emojiLabel.layer.cornerRadius = 12
@@ -61,23 +72,28 @@ final class CollectionViewCell: UICollectionViewCell {
         backgroundCardView.addSubview(titleLabel)
         backgroundCardView.clipsToBounds = true
         backgroundCardView.layer.cornerRadius = 16
-        
+    }
+    
+    private func setupLabel() {
         // dayCountLabel
         dayCountLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         dayCountLabel.textColor = UIColor(named: "Black [day]")
         dayCountLabel.textAlignment = .left
         dayCountLabel.numberOfLines = 1
         dayCountLabel.translatesAutoresizingMaskIntoConstraints = false
-        
+    }
+    
+    private func setupPlusButton() {
         // plusButton
         plusButton.layer.cornerRadius = 17
         plusButton.clipsToBounds = true
         plusButton.backgroundColor = UIColor(named: "White [day]")
         plusButton.translatesAutoresizingMaskIntoConstraints = false
         plusButton.addTarget(self, action: #selector(trackButtonTapped), for: .touchUpInside)
-        
+    }
+    
+    private func setupStacks() {
         // hStack
-        let hStack = UIStackView()
         hStack.addArrangedSubview(dayCountLabel)
         hStack.addArrangedSubview(plusButton)
         hStack.axis = .horizontal
@@ -85,13 +101,14 @@ final class CollectionViewCell: UICollectionViewCell {
         hStack.translatesAutoresizingMaskIntoConstraints = false
         
         // mainStack
-        let mainStack = UIStackView()
         mainStack.addArrangedSubview(backgroundCardView)
         mainStack.addArrangedSubview(hStack)
         contentView.addSubview(mainStack)
         mainStack.axis = .vertical
         mainStack.translatesAutoresizingMaskIntoConstraints = false
-        
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             backgroundCardView.topAnchor.constraint(equalTo: contentView.topAnchor),
             backgroundCardView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -126,8 +143,6 @@ final class CollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    // MARK: - Properties
-    
     func configure(with tracker: Tracker, isCompletedToday: Bool, completedDays: Int ,indexPath: IndexPath) {
         titleLabel.text = tracker.title
         backgroundCardView.backgroundColor = tracker.color
@@ -157,8 +172,8 @@ final class CollectionViewCell: UICollectionViewCell {
         let lastDigit = days % 10
         
         if lastTwoDigits >= 11 && lastTwoDigits <= 14 {
-                return "дней"
-            }
+            return "дней"
+        }
         
         switch lastDigit {
         case 1: return "день"
@@ -169,10 +184,11 @@ final class CollectionViewCell: UICollectionViewCell {
     
     @objc private func trackButtonTapped() {
         guard let trackerId = trackerId,
-        let indexPath = indexPath
+              let indexPath = indexPath
         else {
             assertionFailure("CollectionViewCell: not received trackerId or indexPath")
-            return }
+            return
+        }
         
         if isCompletedToday {
             delegate?.uncompletedTracker(id: trackerId, at: indexPath)

@@ -78,7 +78,6 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate, UITab
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.cellReuseIdentifier, for: indexPath) as? ScheduleTableViewCell else { return UITableViewCell() }
         
         let day = WeekDay.allCases[indexPath.row]
-        print("day: \(day)")
         let dayName = day.dayName
         cell.configure(cellText: dayName, isOn: selectedDays.contains(day)) { isOn in
             if isOn {
@@ -101,8 +100,6 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate, UITab
     @objc private func doneButtonTapped(_ sender: UIButton) {
         finalSchedule?(selectedDays)
         dismiss(animated: true)
-        print("Выбранные дни: \(selectedDays)")
-
     }
     
     

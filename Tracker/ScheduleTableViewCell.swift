@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ScheduleTableViewCell: UITableViewCell {
+final class ScheduleTableViewCell: UITableViewCell {
     
     // MARK: - Properties
     static let cellReuseIdentifier = "scheduleTableViewCell"

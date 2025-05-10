@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HabitTableViewCell: UITableViewCell {
+final class HabitTableViewCell: UITableViewCell {
     
     // MARK: - Properties
     static let cellReuseIdentifier = "habitTableViewCell"
@@ -16,6 +16,9 @@ class HabitTableViewCell: UITableViewCell {
     private let valueLabel = UILabel()
     private let cellImageView = UIImageView()
     private let separatorView = UIView()
+    private let vStack = UIStackView()
+    private let hStack = UIStackView()
+    
     
     // MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -31,7 +34,14 @@ class HabitTableViewCell: UITableViewCell {
     
     // MARK: - UI
     private func setupUI() {
-        
+        setupLabels()
+        setupImage()
+        setupStacks()
+        setupSeparator()
+        setupConstraints()
+    }
+    
+    private func setupLabels() {
         // titleLabel
         contentView.addSubview(titleLabel)
         titleLabel.font = .systemFont(ofSize: 17, weight: .regular)
@@ -45,33 +55,40 @@ class HabitTableViewCell: UITableViewCell {
         valueLabel.textColor = UIColor(named: "Gray")
         valueLabel.textAlignment = .center
         valueLabel.translatesAutoresizingMaskIntoConstraints = false
-        
+    }
+    
+    private func setupImage() {
         // imageView
         cellImageView.image = UIImage(named: "Chevron")
         cellImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        
+    }
+    
+    private func setupStacks() {
         // vStack
-        let vStack = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
+        vStack.addArrangedSubview(titleLabel)
+        vStack.addArrangedSubview(valueLabel)
         vStack.axis = .vertical
         vStack.alignment = .leading
         vStack.spacing = 2
         vStack.translatesAutoresizingMaskIntoConstraints = false
         
         // hStack
-        let hStack = UIStackView(arrangedSubviews: [vStack, cellImageView])
+        hStack.addArrangedSubview(vStack)
+        hStack.addArrangedSubview(cellImageView)
         contentView.addSubview(hStack)
         hStack.axis = .horizontal
         hStack.alignment = .center
         hStack.translatesAutoresizingMaskIntoConstraints = false
-        
+    }
+    
+    private func setupSeparator() {
         // separatorView
         contentView.addSubview(separatorView)
         separatorView.backgroundColor = UIColor(named: "Gray")
         separatorView.translatesAutoresizingMaskIntoConstraints = false
-            
-            
-        
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             cellImageView.heightAnchor.constraint(equalToConstant: 24),
             cellImageView.widthAnchor.constraint(equalToConstant: 24),
@@ -87,6 +104,7 @@ class HabitTableViewCell: UITableViewCell {
             separatorView.heightAnchor.constraint(equalToConstant: 0.5)
         ])
     }
+    
     
     // MARK: - Metods
     func configure(title: String, value: String?, isShowseparator: Bool) {
