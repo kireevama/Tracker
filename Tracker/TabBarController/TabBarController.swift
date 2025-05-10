@@ -17,16 +17,16 @@ final class TabBarController: UITabBarController {
     }
     
     private func setupTabs() {
-        let trackerViewController = TrackerViewController()
-        trackerViewController.tabBarItem.title = "Трекеры"
-        trackerViewController.tabBarItem.image = UIImage(named: "iconCircle")
+        let trackersViewController = TrackersViewController()
+        trackersViewController.tabBarItem.title = "Трекеры"
+        trackersViewController.tabBarItem.image = UIImage(named: "iconCircle")
   
         
         let statisticViewController = StatisticViewController()
         statisticViewController.tabBarItem.title = "Статистика"
         statisticViewController.tabBarItem.image = UIImage(named: "iconRabbit")
         
-        setViewControllers([trackerViewController, statisticViewController], animated: false)
+        setViewControllers([trackersViewController, statisticViewController], animated: false)
         tabBar.tintColor = UIColor(named: "Blue")
         tabBar.backgroundColor = UIColor(named: "White [day]")
     }

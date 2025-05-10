@@ -8,8 +8,8 @@
 import UIKit
 
 class StatisticViewController: UIViewController {
-    // MARK: - Propertys
-    let topNavView: UIView = {
+    // MARK: - Propertyes
+    private let topNavView: UIView = {
         let topNavView = UIView()
         
         return topNavView
@@ -24,7 +24,7 @@ class StatisticViewController: UIViewController {
     
     // MARK: - UI
     private func setupUI() {
-        var label: UILabel = {
+        let label: UILabel = {
             let label = UILabel()
             label.text = "Статистика"
             label.font = UIFont.systemFont(ofSize: 34, weight: .bold)
